@@ -13,9 +13,9 @@ export async function getAccessToken() {
   }
 
   // Token expired, refresh access token with Microsoft API. Both international and china-specific API are supported
-  const oneDriveAuthEndpoint = config.useOneDriveCN
-    ? 'https://login.chinacloudapi.cn/common/oauth2/v2.0/token'
-    : 'https://login.microsoftonline.com/common/oauth2/v2.0/token'
+  const oneDriveAuthEndpoint = `https://login.${
+    config.useOneDriveCN ? 'chinacloudapi.cn' : 'microsoftonline.com'
+  }/common/oauth2/v2.0/token`
 
   const resp = await fetch(oneDriveAuthEndpoint, {
     method: 'POST',
@@ -28,6 +28,7 @@ export async function getAccessToken() {
   if (resp.ok) {
     console.info('Successfully refreshed access_token.')
     const data = await resp.json()
+    console.log('debug:', data)
 
     // Update expiration time at Google Firebase on token refresh
     data.expire_at = timestamp() + data.expires_in

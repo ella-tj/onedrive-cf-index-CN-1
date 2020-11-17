@@ -1,3 +1,4 @@
+import { userProfile } from './render/userProfile'
 import emojiRegex from 'emoji-regex/RGI_Emoji'
 import { getClassNameForMimeType, getClassNameForFilename } from 'font-awesome-filetypes'
 
