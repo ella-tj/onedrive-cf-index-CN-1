@@ -79,7 +79,6 @@ export function renderHTML(body, pLink, pIdx) {
             { once: true }
           )
         }
-        Turbolinks.Location.prototype.isHTML = () => {return true}
         Turbolinks.start()
       </script>
     </body>
