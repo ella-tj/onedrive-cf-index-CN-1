@@ -5,7 +5,8 @@ const preview = {
   pdf: 'pdf',
   code: 'code',
   video: 'video',
-  audio: 'audio'
+  audio: 'audio',
+  html: 'html'
 }
 
 const extensions = {
@@ -48,7 +49,10 @@ const extensions = {
   ogg: preview.audio,
   oga: preview.audio,
   opus: preview.audio,
-  flac: preview.audio
+  flac: preview.audio,
+
+  htm: preview.html,
+  html: preview.html
 }
 
 export { extensions, preview }

@@ -5,7 +5,7 @@ const config = {
    * to get following params: client_id, client_secret, refresh_token & redirect_uri.
    */
   refresh_token: REFRESH_TOKEN,
-  client_id: 'cf8ad9b6-627a-45aa-9ec3-f551dc8ef29a',
+  client_id: '9f325ea1-8e02-4f12-b416-2278149b3d4f',
   client_secret: CLIENT_SECRET,
   redirect_uri: 'http://localhost/od-cf',
 
