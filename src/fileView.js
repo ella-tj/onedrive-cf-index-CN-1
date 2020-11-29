@@ -34,7 +34,6 @@ function renderPDFPreview(file) {
             <span id="loading-progress">Loading PDF...</span>
           </div>
           <script>
-          // No variable declaration. Described in https://github.com/spencerwooo/onedrive-cf-index/pull/46
           loadingLabel = document.querySelector('.loading-label')
           loadingProgress = document.querySelector('#loading-progress')
           function progress({ loaded, total }) {
@@ -124,7 +123,7 @@ function renderImage(file) {
 function renderVideoPlayer(file) {
   return `<div id="dplayer"></div>
           <script>
-          const dp = new DPlayer({
+          new DPlayer({
             container: document.getElementById('dplayer'),
             theme: '#0070f3',
             video: {
@@ -143,7 +142,7 @@ function renderVideoPlayer(file) {
 function renderAudioPlayer(file) {
   return `<div id="aplayer"></div>
           <script>
-          const ap = new APlayer({
+          new APlayer({
             container: document.getElementById('aplayer'),
             theme: '#0070f3',
             audio: [{
