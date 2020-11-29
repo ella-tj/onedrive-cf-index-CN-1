@@ -15,11 +15,6 @@ const config = {
   base: '/share',
 
   /**
-   * The url for your Firebase Realtime Database storage, we'll cache your refresh_token / access_token here.
-   */
-  firebase_url: 'https://cf-index.firebaseio.com/auth.json',
-
-  /**
    * Feature: add OneDriveCN (21Vianet) support
    * Usage: simply change `useOneDriveCN` to true
    */
