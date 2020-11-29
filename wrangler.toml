@@ -2,6 +2,9 @@ name = "beet"
 type = "webpack"
 workers_dev = true
 account_id = "a1e44a02bc09902ebeafca00dc98996f"
+kv_namespaces = [
+    { binding = "BUCKET", id = "1cac5d222f33415dbd351720b331a5b5", preview_id = "ad5f8a197a784fef8cd2282a8997c1b0" }
+]
 
 [env.staging]
 name = "drive-staging"
