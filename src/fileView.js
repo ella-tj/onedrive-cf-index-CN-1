@@ -169,16 +169,6 @@ function renderUnsupportedView(fileExt) {
 }
 
 /**
- * get html from fileDownload url
- *
- * @param {Object} file Object representing the file to preview
- */
-async function renderPage(file) {
-  const resp = await fetch(file['@microsoft.graph.downloadUrl'])
-  return resp.text()
-}
-
-/**
  * Render preview of supported file format
  *
  * @param {Object} file Object representing the file to preview
@@ -206,9 +196,6 @@ async function renderPreview(file, fileExt) {
 
     case preview.audio:
       return renderAudioPlayer(file)
-
-    case preview.html:
-      return await renderPage(file)
 
     default:
       return renderUnsupportedView(fileExt)
