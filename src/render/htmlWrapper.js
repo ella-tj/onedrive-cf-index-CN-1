@@ -1,6 +1,5 @@
 import { pink, plum } from 'color-name'
 import { favicon } from './favicon'
-import { userProfile } from './userProfile'
 
 const COMMIT_HASH = '5d7579fcfb4729fcb855110c5f0ed5488d1d0d44'
 
@@ -35,7 +34,7 @@ export function renderHTML(body, pLink, pIdx) {
       <meta charset="utf-8" />
       <meta http-equiv="x-ua-compatible" content="ie=edge, chrome=1" />
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-      <title>${userProfile.title}</title>
+      <title>Beet's OneDrive Index</title>
       <link rel="shortcut icon" type="image/png" sizes="16x16" href="${favicon}" />
       <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.1/css/all.min.css" rel="stylesheet">
       <link href="https://cdn.jsdelivr.net/gh/spencerwooo/onedrive-cf-index@${COMMIT_HASH}/themes/spencer.css" rel="stylesheet">
@@ -51,11 +50,14 @@ export function renderHTML(body, pLink, pIdx) {
       <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
     </head>
     <body>
-      <nav id="navbar" data-turbolinks-permanent><div class="brand">${userProfile.navTitle}</div></nav>
+      <nav id="navbar" data-turbolinks-permanent><div class="brand">☘️ Beet's OneDrive Index</div></nav>
       ${body}
       <div class="paginate-container">${pagination(pIdx)}</div>
       <div id="flex-container" data-turbolinks-permanent style="flex-grow: 1;"></div>
-      <footer id="footer" data-turbolinks-permanent>${userProfile.footerContent}</footer>
+      <footer id="footer" data-turbolinks-permanent>
+      <p>thanks: <a href="https://github.com/spencerwooo/onedrive-cf-index">onedrive-cf-index</a>
+      , hosted on <a href="https://www.cloudflare.com/products/cloudflare-workers/">Cloudflare Workers</a>.</p>
+      </footer>
       <script>
         if (typeof ap !== "undefined" && ap.paused !== true) {
           ap.pause()

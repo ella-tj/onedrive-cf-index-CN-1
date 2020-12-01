@@ -65,15 +65,6 @@ const config = {
   thumbnail: true,
 
   /**
-   * Small File Upload (<= 4MB)
-   * POST https://<base_url>/<directory_path>/?upload=<filename>&key=<secret_key>
-   */
-  upload: {
-    enable: false,
-    key: ''
-  },
-
-  /**
    * Feature: Proxy Download
    * Use Cloudflare as a relay to speed up download. (Especially in Mainland China)
    * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw=true&proxied

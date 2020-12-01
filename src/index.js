@@ -2,10 +2,12 @@ import config from './config/default'
 import { AUTH_ENABLED, NAME, PASS } from './auth/config'
 import { parseAuthHeader, unauthorizedResponse } from './auth/credentials'
 import { getAccessToken } from './auth/onedrive'
-import { handleFile, handleUpload } from './files/load'
+import { handleFile } from './files/load'
 import { extensions } from './render/fileExtension'
 import { renderFolderView } from './folderView'
 import { renderFilePreview } from './fileView'
+
+const oneDriveApiEndpoint = config.useOneDriveCN ? 'microsoftgraph.chinacloudapi.cn' : 'graph.microsoft.com'
 
 addEventListener('fetch', event => {
   event.respondWith(handle(event.request))
@@ -61,8 +63,6 @@ async function handleRequest(request) {
   const rawImage = searchParams.get('raw')
   const thumbnail = config.thumbnail ? searchParams.get('thumbnail') : false
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
-
-  const oneDriveApiEndpoint = config.useOneDriveCN ? 'microsoftgraph.chinacloudapi.cn' : 'graph.microsoft.com'
 
   if (thumbnail) {
     const url = `https://${oneDriveApiEndpoint}/v1.0/me/drive/root:${
@@ -127,19 +127,6 @@ async function handleRequest(request) {
         }
       })
     } else {
-      // Render folder view, list all children files
-      if (config.upload && request.method === 'POST') {
-        const filename = searchParams.get('upload')
-        const key = searchParams.get('key')
-        if (filename && key && config.upload.key === key) {
-          return await handleUpload(request, neoPathname, filename)
-        } else {
-          return new Response('', {
-            status: 400
-          })
-        }
-      }
-
       // 302 all folder requests that doesn't end with /
       if (!isRequestFolder) {
         return Response.redirect(request.url + '/', 302)

@@ -1,4 +1,3 @@
-import { userProfile } from './render/userProfile'
 import emojiRegex from 'emoji-regex/RGI_Emoji'
 import { getClassNameForMimeType, getClassNameForFilename } from 'font-awesome-filetypes'
 
@@ -50,9 +49,16 @@ export async function renderFolderView(items, path, request) {
         (fileName === '..' ? '' : el('span', ['class="size"'], readableFileSize(size)))
     )
 
-  const intro = `<div class="intro markdown-body" style="text-align: left; margin-top: 2rem;">
-                   ${userProfile.introContent}
-                 </div>`
+  const intro = el(
+    'div',
+    ['class="intro markdown-body"', 'style="text-align: left;margin-top: 2rem;"'],
+    el('p', ['style="color: #F56476"'], '☘️ beet\'s <a href="https://www.beetcb.com">blog</a>') +
+      el(
+        'p',
+        ['style="color: #F56476"'],
+        '☘️ Thanks: <a href="https://github.com/spencerwooo/onedrive-cf-index">onedrive-cf-index</a>'
+      )
+  )
 
   // Check if current directory contains README.md, if true, then render spinner
   let readmeExists = false
