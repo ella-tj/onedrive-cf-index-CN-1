@@ -10,7 +10,7 @@ Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencer
 
 ## 演示地址
 
-[🍺 Beet's OneDrive Index](https://drive.tcxz.cc/).
+[☘️ Beet's OneDrive Index](https://drive.tcxz.cc/).
 
 ---
 
@@ -34,7 +34,7 @@ Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencer
 
 2. 保存 `client_id` ，添加并保存 `client_secret`
 
-3. API 权限（Microsoft Graph）添加 `offline_access, Files.Read, Files.Read.All` `API permissions` 三个权限。
+3. API 权限（Microsoft Graph）添加 `offline_access, Files.Read, Files.Read.All` 三个权限。
 
 4. **使用 POSTMAN 获得 `refresh_token`**
    > 源库提供的 `https://heymind.github.io/tools/microsoft-graph-api-auth-cn` （世纪互联）尝试失败, 所以人工获取：
@@ -68,17 +68,6 @@ Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencer
 
     如出现问题，请参考 [azure doc](https://docs.azure.cn/zh-cn/active-directory/develop/v2-oauth2-auth-code-flow)
 
-#### 获取 firebase 令牌(使用 firebase 做 assess-token 持久化)
-
-> 需自行保存的 key：
->
-> - `firebase_url`
-> - `firebase_token`
-
-1. 注册 [Google Firebase](https://firebase.google.com/). 创建项目。
-2. 左侧进入 `Database`, 创建
-   Realtime 数据库，以锁定模式开始 » 启用 » 修改 null 值为 `auth` » 得到 `firebase_url` (url 示例： `https://xxx.firebaseio.com/auth.json`)
-
 ### 构建应用
 
 clone （fork） 本项目，安装依赖：
@@ -108,7 +97,14 @@ npm i
 
    > 如果需要使用 cloudflare 里的域名绑定 worker，需要额外获取 `zone ID`, [参考文档](https://developers.cloudflare.com/workers/quickstart#account-id-and-zone-id)
 
-3. 修改两个配置文件的几个选项
+3. 创建 KV 
+```sh
+# Create KV bucket
+wrangler kv:namespace create "BUCKET"
+```
+复制返回对象于第四步中 `kv_namespaces` 数组中
+
+4. 修改两个配置文件的几个选项
 
    - `wrangler.toml`
 
@@ -122,6 +118,11 @@ npm i
 
      # 如果使用了域名，需要添加 zone_id
      # zone_id = ""
+     
+     # KV
+     kv_namespaces = [
+            { binding = "BUCKET", id = "1cac5d222f33415dbd351720b331a5b5", preview_id = "ad5f8a197a784fef8cd2282a8997c1b0" }
+     ]
    ```
 
    - `src/config/default.js`
@@ -136,7 +137,7 @@ npm i
       firebase_url = '',
     ```
 
-### 使用 wrangler 正式构建应用：
+### 使用 wrangler 上传密钥：
 
 ```sh
 # 上传 refresh_token, client_secret, firebase_token 到 cloudflare 并加密
@@ -146,9 +147,6 @@ wrangler secret put REFRESH_TOKEN
 
 wrangler secret put CLIENT_SECRET
 # ... enter your client_secret
-
-wrangler secret put FIREBASE_TOKEN
-# ... enter your firebase_token
 ```
 
 全部上传成功后，可以预览和发布：
@@ -172,11 +170,3 @@ wrangler publish
 `src/folderView.js` -> home intro
 
 `src/config/default.js` -> toggle pagination feature
-
-> ~~后期考虑使用 config 文件自定义~~
-> 修改简单的 `src/render/userProfile` 可自定义如下四项设置
-
-- title
-- navTitle
-- introContent
-- footerContent
