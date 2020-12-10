@@ -12,7 +12,7 @@ const config = {
   /**
    * The base path for indexing, all files and subfolders are public by this tool. For example: `/Public`.
    */
-  base: '/share',
+  base: '/published index directory',
 
   /**
    * Feature: add OneDriveCN (21Vianet) support
@@ -70,7 +70,7 @@ const config = {
    * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw=true&proxied
    * You can also embed this link (url encoded) directly inside Markdown or HTML.
    */
-  proxyDownload: true
+  proxyDownload: false
 }
 
 export default config
