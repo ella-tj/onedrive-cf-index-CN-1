@@ -15,10 +15,15 @@ const config = {
   base: '/published index directory',
 
   /**
-   * Feature: add OneDriveCN (21Vianet) support
-   * Usage: simply change `useOneDriveCN` to true
+   * Feature: add china onedrive (21Vianet) support
+   * Usage: set param `China` defalut value to `true`
    */
-  useOneDriveCN: true,
+  nationalGraphApi: ((China = true) => {
+    return {
+      graph: China ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com',
+      auth: China ? 'https://login.chinacloudapi.cn' : '	https://login.microsoftonline.com'
+    }
+  })(),
 
   /**
    * Feature: Pagination when a floder has multiple(>${top}) files
@@ -49,10 +54,10 @@ const config = {
    *
    */
   cache: {
-    enable: false,
+    enable: true,
     entireFileCacheLimit: 10000000, // 10MB
     chunkedCacheLimit: 100000000, // 100MB
-    paths: ['/Images']
+    paths: ['/']
   },
 
   /**

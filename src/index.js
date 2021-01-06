@@ -7,8 +7,6 @@ import { extensions } from './render/fileExtension'
 import { renderFolderView } from './folderView'
 import { renderFilePreview } from './fileView'
 
-const oneDriveApiEndpoint = config.useOneDriveCN ? 'microsoftgraph.chinacloudapi.cn' : 'graph.microsoft.com'
-
 addEventListener('fetch', event => {
   event.respondWith(handle(event.request))
 })
@@ -65,7 +63,7 @@ async function handleRequest(request) {
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
   if (thumbnail) {
-    const url = `https://${oneDriveApiEndpoint}/v1.0/me/drive/root:${
+    const url = `${config.nationalGraphApi.graph}/v1.0/me/drive/root:${
       base ? base : '/' + (neoPathname === '/' ? '' : neoPathname)
     }:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
@@ -81,7 +79,7 @@ async function handleRequest(request) {
 
   const isRequestFolder = pathname.endsWith('/') || searchParams.get('page')
   let url =
-    `https://${oneDriveApiEndpoint}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}` +
+    `${config.nationalGraphApi.graph}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}` +
     (isRequestFolder && config.pagination.enable && config.pagination.top ? `?$top=${config.pagination.top}` : ``)
 
   // get & set {pLink ,pIdx} for fetching and paging
