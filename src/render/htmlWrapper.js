@@ -47,6 +47,10 @@ export function renderHTML(body, pLink, pIdx) {
       <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
       <style>
+        .paginate-container {
+          display: grid;
+          grid-template-columns: repeat(3, auto);
+        }
         .paginate-container a {
           cursor: pointer;
           text-decoration: none;

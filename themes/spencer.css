@@ -142,8 +142,6 @@ a.item:hover {
 
 .paginate-container {
   margin-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
 }
 
 .paginate-container a {

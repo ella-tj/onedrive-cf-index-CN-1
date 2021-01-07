@@ -51,15 +51,15 @@ const config = {
    *
    * `Chunked Cache` would stream the file content to the client while caching it.
    *  But there is no exact Content-Length in the response headers. ( Content-Length: chunked )
-   * 
+   *
    * `previewCache`: using cf cache to preview
    *
    */
   cache: {
-    enable: true,
+    enable: false,
     entireFileCacheLimit: 10000000, // 10MB
     chunkedCacheLimit: 100000000, // 100MB
-    previewCache: true,
+    previewCache: false,
     paths: ['/']
   },
 
