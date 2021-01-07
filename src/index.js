@@ -122,7 +122,7 @@ async function handleRequest(request) {
       // Add cache preview feature
       let cacheUrl
       if (config.cache.enable && config.cache.previewCache && data.size < config.cache.chunkedCacheLimit) {
-        cacheUrl = pathname + '?proxied&raw=true'
+        cacheUrl = request.url + '?proxied&raw=true'
       }
 
       return new Response(await renderFilePreview(data, pathname, fileExt, cacheUrl ? cacheUrl : null), {
