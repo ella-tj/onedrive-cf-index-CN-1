@@ -40,8 +40,8 @@ function wrapPathName(pathname, isRequestFolder) {
   pathname = base + pathname
   const isIndexingRoot = pathname === '/'
   if (isRequestFolder) {
-    if (isIndexingRoot) return '/'
-    return `:${pathname.replace(/\/$/, '')}:/`
+    if (isIndexingRoot) return ''
+    return `:${pathname.replace(/\/$/, '')}:`
   }
   return `:${pathname}`
 }
@@ -66,13 +66,12 @@ async function handleRequest(request) {
     const url = `${config.nationalApi.graph}/v1.0/me/drive/root${wrapPathName(
       neoPathname,
       isRequestFolder
-    )}thumbnails/0/${thumbnail}/content`
+    )}:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
       headers: {
         Authorization: `bearer ${accessToken}`
       }
     })
-    console.log(resp)
 
     return await handleFile(request, pathname, resp.url, {
       proxied
@@ -80,8 +79,11 @@ async function handleRequest(request) {
   }
 
   let url = `${config.nationalApi.graph}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}${
-    isRequestFolder ? 'children' : ''
-  }${isRequestFolder && config.pagination.enable && config.pagination.top ? `?$top=${config.pagination.top}` : ''}`
+    isRequestFolder
+      ? '/children?$select=name,size,folder,file'
+      : '?select=%40microsoft.graph.downloadUrl,name,size,file'
+  }${isRequestFolder && config.pagination.enable && config.pagination.top ? `&$top=${config.pagination.top}` : ''}`
+  console.log(url)
 
   // get & set {pLink ,pIdx} for fetching and paging
   const paginationLink = request.headers.get('pLink')
@@ -98,6 +100,7 @@ async function handleRequest(request) {
   let error = null
   if (resp.ok) {
     const data = await resp.json()
+    console.log(data)
     if (data['@odata.nextLink']) {
       request.pIdx = paginationIdx ? paginationIdx : 1
       request.pLink = data['@odata.nextLink'].match(/&\$skiptoken=(.+)/)[1]

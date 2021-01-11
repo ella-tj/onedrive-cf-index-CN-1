@@ -51,10 +51,6 @@ export function renderHTML(body, pLink, pIdx) {
           display: grid;
           grid-template-columns: repeat(3, auto);
         }
-        .paginate-container a {
-          cursor: pointer;
-          text-decoration: none;
-        }
       </style>
     </head>
     <body>

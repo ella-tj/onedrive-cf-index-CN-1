@@ -26,7 +26,6 @@ export async function getAccessToken() {
   if (resp.ok) {
     console.info('Successfully refreshed access_token.')
     const data = await resp.json()
-    console.log('debug:', data)
 
     // Update expiration time on token refresh
     data.expire_at = timestamp() + data.expires_in
