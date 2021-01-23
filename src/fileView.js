@@ -123,7 +123,7 @@ function renderImage(file) {
 function renderVideoPlayer(file) {
   return `<div id="dplayer"></div>
           <script>
-          new DPlayer({
+          dp = new DPlayer({
             container: document.getElementById('dplayer'),
             theme: '#0070f3',
             video: {
@@ -142,7 +142,7 @@ function renderVideoPlayer(file) {
 function renderAudioPlayer(file) {
   return `<div id="aplayer"></div>
           <script>
-          new APlayer({
+          ap = new APlayer({
             container: document.getElementById('aplayer'),
             theme: '#0070f3',
             audio: [{
@@ -171,7 +171,11 @@ function renderUnsupportedView(fileExt) {
  * @param {string} fileExt The file extension parsed
  */
 async function renderPreview(file, fileExt, cacheUrl) {
-  cacheUrl ? (file['@microsoft.graph.downloadUrl'] = cacheUrl) : null
+  if (cacheUrl) {
+    // This will change your download url too! (proxied download)
+    file['@microsoft.graph.downloadUrl'] = cacheUrl
+  }
+
   switch (extensions[fileExt]) {
     case preview.markdown:
       return await renderMarkdown(file['@microsoft.graph.downloadUrl'], '', 'style="margin-top: 0;"')

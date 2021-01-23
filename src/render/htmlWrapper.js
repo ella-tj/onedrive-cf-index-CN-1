@@ -1,7 +1,7 @@
 import { pink, plum } from 'color-name'
 import { favicon } from './favicon'
 
-const COMMIT_HASH = '5d7579fcfb4729fcb855110c5f0ed5488d1d0d44'
+const COMMIT_HASH = '6e91d1e3342969a45b21c2893a788ba3dc46f854'
 
 const pagination = (pIdx, attrs) => {
   const getAttrs = (c, h, isNext) =>
@@ -46,12 +46,6 @@ export function renderHTML(body, pLink, pIdx) {
       <script src="https://cdn.jsdelivr.net/gh/pipwerks/PDFObject/pdfobject.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
-      <style>
-        .paginate-container {
-          display: grid;
-          grid-template-columns: repeat(3, auto);
-        }
-      </style>
     </head>
     <body>
       <nav id="navbar" data-turbolinks-permanent><div class="brand">☘️ Beet's OneDrive Index</div></nav>
@@ -64,7 +58,12 @@ export function renderHTML(body, pLink, pIdx) {
       </footer>
       <script>
         if (typeof ap !== "undefined" && ap.paused !== true) {
-          ap.pause()
+          ap.destroy()
+          ap = undefined
+        }
+        if (typeof dp !== "undefined" && dp.paused !== true) {
+          dp.destroy()
+          dp = undefined
         }
         Prism.highlightAll()
         mediumZoom('[data-zoomable]')

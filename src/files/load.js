@@ -79,3 +79,16 @@ export async function handleFile(request, pathname, downloadUrl, { proxied = fal
   }
   return (proxied ? proxiedDownload : directDownload)(downloadUrl)
 }
+
+export async function handleUpload(request, pathname, filename) {
+  const url = `${config.apiEndpoint.graph}/v1.0/me/drive/root:${encodeURI(config.base) +
+    (pathname.slice(-1) === '/' ? pathname : pathname + '/')}${filename}:/content`
+  return await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `bearer ${await getAccessToken()}`,
+      ...request.headers
+    },
+    body: request.body
+  })
+}

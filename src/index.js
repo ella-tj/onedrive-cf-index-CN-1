@@ -58,15 +58,13 @@ async function handleRequest(request) {
   const neoPathname = pathname.replace(/pagination$/, '')
   const isRequestFolder = pathname.endsWith('/') || searchParams.get('page')
 
-  const rawImage = searchParams.get('raw')
+  const rawFile = searchParams.get('raw') !== null
   const thumbnail = config.thumbnail ? searchParams.get('thumbnail') : false
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
   if (thumbnail) {
-    const url = `${config.nationalApi.graph}/v1.0/me/drive/root${wrapPathName(
-      neoPathname,
-      isRequestFolder
-    )}:/thumbnails/0/${thumbnail}/content`
+    const url = `${config.apiEndpoint.graph}/v1.0/me/drive/root:${base ||
+      '/' + (neoPathname === '/' ? '' : neoPathname)}:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
       headers: {
         Authorization: `bearer ${accessToken}`
@@ -89,7 +87,9 @@ async function handleRequest(request) {
   const paginationLink = request.headers.get('pLink')
   const paginationIdx = request.headers.get('pIdx') - 0
 
-  if (paginationLink && paginationLink !== 'undefined') url += `&$skiptoken=${paginationLink}`
+  if (paginationLink && paginationLink !== 'undefined') {
+    url += `&$skiptoken=${paginationLink}`
+  }
 
   const resp = await fetch(url, {
     headers: {
@@ -102,7 +102,7 @@ async function handleRequest(request) {
     const data = await resp.json()
     console.log(data)
     if (data['@odata.nextLink']) {
-      request.pIdx = paginationIdx ? paginationIdx : 1
+      request.pIdx = paginationIdx || 1
       request.pLink = data['@odata.nextLink'].match(/&\$skiptoken=(.+)/)[1]
     } else if (paginationIdx) {
       request.pIdx = -paginationIdx
@@ -114,21 +114,21 @@ async function handleRequest(request) {
         .pop()
         .toLowerCase()
 
-      // Render image directly if ?raw=true parameters are given
-      if (rawImage || !(fileExt in extensions)) {
+      // Render file directly if url params 'raw' are given
+      if (rawFile || !(fileExt in extensions)) {
         return await handleFile(request, pathname, data['@microsoft.graph.downloadUrl'], {
           proxied,
           fileSize: data.size
         })
       }
 
-      // Add cache preview feature
-      let cacheUrl
+      // Add preview by CloudFlare worker cache feature
+      let cacheUrl = null
       if (config.cache.enable && config.cache.previewCache && data.size < config.cache.chunkedCacheLimit) {
-        cacheUrl = request.url + '?proxied&raw=true'
+        cacheUrl = request.url + '?proxied&raw'
       }
 
-      return new Response(await renderFilePreview(data, pathname, fileExt, cacheUrl ? cacheUrl : null), {
+      return new Response(await renderFilePreview(data, pathname, fileExt, cacheUrl || null), {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'content-type': 'text/html'

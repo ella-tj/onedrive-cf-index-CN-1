@@ -15,13 +15,15 @@ const config = {
   base: '/published index directory',
 
   /**
-   * Feature: add china onedrive (21Vianet) support
-   * Usage: set param `China` defalut value to `true`
+   * Feature: add support for Chinese Onedrive (21Vianet) API endpoints
+   * Usage: set param `useCnEndpoints` value to `true`
    */
-  nationalApi: ((China = true) => {
+  apiEndpoint: (() => {
+    const useCnEndpoints = true
+
     return {
-      graph: China ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com',
-      auth: China ? 'https://login.chinacloudapi.cn' : '	https://login.microsoftonline.com'
+      graph: useCnEndpoints ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com',
+      auth: useCnEndpoints ? 'https://login.chinacloudapi.cn' : 'https://login.microsoftonline.com'
     }
   })(),
 
@@ -52,11 +54,10 @@ const config = {
    * `Chunked Cache` would stream the file content to the client while caching it.
    *  But there is no exact Content-Length in the response headers. ( Content-Length: chunked )
    *
-   * `previewCache`: using cf cache to preview
-   *
+   * `previewCache`: using CloudFlare cache to preview
    */
   cache: {
-    enable: false,
+    enable: true,
     entireFileCacheLimit: 10000000, // 10MB
     chunkedCacheLimit: 100000000, // 100MB
     previewCache: false,
@@ -75,7 +76,7 @@ const config = {
   /**
    * Feature: Proxy Download
    * Use Cloudflare as a relay to speed up download. (Especially in Mainland China)
-   * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw=true&proxied
+   * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw&proxied
    * You can also embed this link (url encoded) directly inside Markdown or HTML.
    */
   proxyDownload: false
