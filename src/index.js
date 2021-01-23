@@ -1,7 +1,7 @@
 import config from './config/default'
 import { AUTH_ENABLED, NAME, PASS } from './auth/config'
 import { parseAuthHeader, unauthorizedResponse } from './auth/credentials'
-import { getAccessToken } from './auth/onedrive'
+import { getAccessToken, getSiteID } from './auth/onedrive'
 import { handleFile } from './files/load'
 import { extensions } from './render/fileExtension'
 import { renderFolderView } from './folderView'
@@ -53,6 +53,9 @@ async function handleRequest(request) {
   }
 
   const accessToken = await getAccessToken()
+  if (config.type.driveType) {
+    config.baseResource = `/sites/${await getSiteID(accessToken)}/drive`
+  }
 
   const { pathname, searchParams } = new URL(request.url)
   const neoPathname = pathname.replace(/pagination$/, '')
@@ -63,7 +66,7 @@ async function handleRequest(request) {
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
   if (thumbnail) {
-    const url = `${config.apiEndpoint.graph}/v1.0/me/drive/root:${base ||
+    const url = `${config.apiEndpoint.graph}${config.baseResource}/root:${base ||
       '/' + (neoPathname === '/' ? '' : neoPathname)}:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
       headers: {
@@ -76,12 +79,11 @@ async function handleRequest(request) {
     })
   }
 
-  let url = `${config.apiEndpoint.graph}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}${
+  let url = `${config.apiEndpoint.graph}${config.baseResource}/root${wrapPathName(neoPathname, isRequestFolder)}${
     isRequestFolder
       ? '/children?$select=name,size,folder,file'
       : '?select=%40microsoft.graph.downloadUrl,name,size,file'
   }${isRequestFolder && config.pagination.enable && config.pagination.top ? `&$top=${config.pagination.top}` : ''}`
-  console.log(url)
 
   // get & set {pLink ,pIdx} for fetching and paging
   const paginationLink = request.headers.get('pLink')
@@ -90,7 +92,7 @@ async function handleRequest(request) {
   if (paginationLink && paginationLink !== 'undefined') {
     url += `&$skiptoken=${paginationLink}`
   }
-
+  
   const resp = await fetch(url, {
     headers: {
       Authorization: `bearer ${accessToken}`

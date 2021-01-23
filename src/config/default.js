@@ -11,10 +11,10 @@ const config = {
    * !Note: we do not support deploy onedrive & sharepoint at the same time
    */
   type: {
-    accountType: 0,
-    driveType: 0,
-    hostName: null,
-    sitePath: null
+    accountType: 1,
+    driveType: 1,
+    hostName: 'odbeet.sharepoint.cn',
+    sitePath: '/sites/beet'
   },
 
   /**
@@ -29,7 +29,7 @@ const config = {
   /**
    * The base path for indexing, all files and subfolders are public by this tool. For example: `/Public`.
    */
-  base: '/published index directory',
+  base: '/',
 
   /**
    * Feature: Pagination when a folder has multiple(>${top}) files
@@ -92,7 +92,7 @@ const config = {
       ? 'https://login.chinacloudapi.cn/common/oauth2/v2.0'
       : 'https://login.microsoftonline.com/common/oauth2/v2.0'
   }
-  config.baseResource = driveType ? `/sites/${hostName}:${sitePath}:/drive` : '/me/drive'
-})(config)
+  config.baseResource = driveType ? `/sites/${hostName}:${sitePath}` : '/me/drive'
+})(config.type)
 
 export default config
