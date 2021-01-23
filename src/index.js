@@ -76,7 +76,7 @@ async function handleRequest(request) {
     })
   }
 
-  let url = `${config.nationalApi.graph}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}${
+  let url = `${config.apiEndpoint.graph}/v1.0/me/drive/root${wrapPathName(neoPathname, isRequestFolder)}${
     isRequestFolder
       ? '/children?$select=name,size,folder,file'
       : '?select=%40microsoft.graph.downloadUrl,name,size,file'
