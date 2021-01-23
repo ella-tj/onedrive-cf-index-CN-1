@@ -1,6 +1,23 @@
 /* eslint-disable no-irregular-whitespace */
 const config = {
   /**
+   * Configure the account/resource type for deployment (with 0 or 1)
+   * - accountType: controls account type, 0 for global, 1 for china (21Vianet)
+   * - driveType: controls drive resource type, 0 for onedrive, 1 for sharepoint document
+   *
+   * Follow key is used for sharepoint resource, change them only if you gonna use sharepoint
+   * - hostName: sharepoint site hostname (like 'name.sharepoint.com')
+   * - sitePath: sharepoint site path (like '/sites/name')
+   * !Note: we do not support deploy onedrive & sharepoint at the same time
+   */
+  type: {
+    accountType: 0,
+    driveType: 0,
+    hostName: null,
+    sitePath: null
+  },
+
+  /**
    * You can use this tool http://heymind.github.io/tools/microsoft-graph-api-auth
    * to get following params: client_id, client_secret, refresh_token & redirect_uri.
    */
@@ -15,23 +32,8 @@ const config = {
   base: '/published index directory',
 
   /**
-   * Feature: add support for Chinese Onedrive (21Vianet) API endpoints
-   * Usage: set param `useCnEndpoints` value to `true`
-   */
-  apiEndpoint: (() => {
-    const useCnEndpoints = true
-
-    return {
-      graph: useCnEndpoints ? 'https://microsoftgraph.chinacloudapi.cn' : 'https://graph.microsoft.com',
-      auth: useCnEndpoints ? 'https://login.chinacloudapi.cn' : 'https://login.microsoftonline.com'
-    }
-  })(),
-
-  /**
-   * Feature: Pagination when a floder has multiple(>${top}) files
-   * parmas:
-   * - enable: toggle this feature
-   * - top: specify the page size limit of the result set, a big top's value will slow down fetching speed
+   * Feature: Pagination when a folder has multiple(>${top}) files
+   * - top: specify the page size limit of the result set, a big `top` value will slow down the fetching speed
    */
   pagination: {
     enable: true,
@@ -81,5 +83,16 @@ const config = {
    */
   proxyDownload: false
 }
+
+// IIFE to set apiEndpoint & baseResource
+!(function({ accountType, driveType, hostName, sitePath }) {
+  config.apiEndpoint = {
+    graph: accountType ? 'https://microsoftgraph.chinacloudapi.cn/v1.0' : 'https://graph.microsoft.com/v1.0',
+    auth: accountType
+      ? 'https://login.chinacloudapi.cn/common/oauth2/v2.0'
+      : 'https://login.microsoftonline.com/common/oauth2/v2.0'
+  }
+  config.baseResource = driveType ? `/sites/${hostName}:${sitePath}:/drive` : '/me/drive'
+})(config)
 
 export default config
