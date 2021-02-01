@@ -1,4 +1,5 @@
 import config from '../config/default'
+import { getAccessToken } from '../auth/onedrive'
 
 /**
  * Cloudflare cache instance
