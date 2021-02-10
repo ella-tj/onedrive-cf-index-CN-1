@@ -12,7 +12,7 @@ const config = {
    */
   type: {
     accountType: 1,
-    driveType: 1,
+    driveType: 0,
     hostName: 'odbeet.sharepoint.cn',
     sitePath: '/sites/beet'
   },
@@ -29,7 +29,7 @@ const config = {
   /**
    * The base path for indexing, all files and subfolders are public by this tool. For example: `/Public`.
    */
-  base: '/',
+  base: '/published index directory',
 
   /**
    * Feature: Pagination when a folder has multiple(>${top}) files
