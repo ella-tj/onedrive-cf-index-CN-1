@@ -85,6 +85,7 @@ const config = {
 }
 
 // IIFE to set apiEndpoint & baseResource
+// eslint-disable-next-line no-unused-expressions
 !(function({ accountType, driveType, hostName, sitePath }) {
   config.apiEndpoint = {
     graph: accountType ? 'https://microsoftgraph.chinacloudapi.cn/v1.0' : 'https://graph.microsoft.com/v1.0',

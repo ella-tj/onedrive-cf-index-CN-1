@@ -81,9 +81,9 @@ async function handleRequest(request) {
 
   let url = `${config.apiEndpoint.graph}${config.baseResource}/root${wrapPathName(neoPathname, isRequestFolder)}${
     isRequestFolder
-      ? '/children?$select=name,size,folder,file'
+      ? '/children?' + `${config.pagination.enable && config.pagination.top ? `&$top=${config.pagination.top}` : ''}`
       : '?select=%40microsoft.graph.downloadUrl,name,size,file'
-  }${isRequestFolder && config.pagination.enable && config.pagination.top ? `&$top=${config.pagination.top}` : ''}`
+  }`
 
   // get & set {pLink ,pIdx} for fetching and paging
   const paginationLink = request.headers.get('pLink')
@@ -92,7 +92,6 @@ async function handleRequest(request) {
   if (paginationLink && paginationLink !== 'undefined') {
     url += `&$skiptoken=${paginationLink}`
   }
-  
   const resp = await fetch(url, {
     headers: {
       Authorization: `bearer ${accessToken}`
