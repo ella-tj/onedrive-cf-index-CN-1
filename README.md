@@ -65,8 +65,7 @@ Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencer
 
   ![](https://i.imgur.com/yhSl4gc.png)
 
-
-    如出现问题，请参考 [azure doc](https://docs.azure.cn/zh-cn/active-directory/develop/v2-oauth2-auth-code-flow)
+  如出现问题，请参考 [azure doc](https://docs.azure.cn/zh-cn/active-directory/develop/v2-oauth2-auth-code-flow)
 
 ### 构建应用
 
@@ -97,11 +96,13 @@ npm i
 
    > 如果需要使用 cloudflare 里的域名绑定 worker，需要额外获取 `zone ID`, [参考文档](https://developers.cloudflare.com/workers/quickstart#account-id-and-zone-id)
 
-3. 创建 KV 
+3. 创建 KV
+
 ```sh
 # Create KV bucket
 wrangler kv:namespace create "BUCKET"
 ```
+
 复制返回对象于第四步中 `kv_namespaces` 数组中
 
 4. 修改两个配置文件的几个选项
@@ -118,7 +119,7 @@ wrangler kv:namespace create "BUCKET"
 
      # 如果使用了域名，需要添加 zone_id
      # zone_id = ""
-     
+
      # KV
      kv_namespaces = [
             { binding = "BUCKET", id = "1cac5d222f33415dbd351720b331a5b5", preview_id = "ad5f8a197a784fef8cd2282a8997c1b0" }
@@ -127,15 +128,14 @@ wrangler kv:namespace create "BUCKET"
 
    - `src/config/default.js`
 
+   ```javascript
+     client_id: '',
 
-    ```javascript
-      client_id: '',
+     // 网盘索引目录
+     base = "",
 
-      // 网盘索引目录
-      base = "",
-
-      firebase_url = '',
-    ```
+     firebase_url = '',
+   ```
 
 ### 使用 wrangler 上传密钥：
 

@@ -42,7 +42,7 @@ export function unauthorizedResponse(body) {
     statusText: "'Authentication required.'",
     body: body,
     headers: {
-      'WWW-Authenticate': 'Basic realm="User Visible Realm"'
-    }
+      'WWW-Authenticate': 'Basic realm="User Visible Realm"',
+    },
   })
 }

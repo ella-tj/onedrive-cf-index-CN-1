@@ -14,7 +14,7 @@ const config = {
     accountType: 1,
     driveType: 0,
     hostName: 'odbeet.sharepoint.cn',
-    sitePath: '/sites/beet'
+    sitePath: '/sites/beet',
   },
 
   /**
@@ -24,7 +24,7 @@ const config = {
   refresh_token: REFRESH_TOKEN,
   client_id: '9f325ea1-8e02-4f12-b416-2278149b3d4f',
   client_secret: CLIENT_SECRET,
-  redirect_uri: 'http://localhost/od-cf',
+  redirect_uri: 'http://localhost',
 
   /**
    * The base path for indexing, all files and subfolders are public by this tool. For example: `/Public`.
@@ -37,7 +37,7 @@ const config = {
    */
   pagination: {
     enable: true,
-    top: 100 // $top accepts a minimum value of 1 and a maximum value of 999 (inclusive)
+    top: 100, // $top accepts a minimum value of 1 and a maximum value of 999 (inclusive)
   },
 
   /**
@@ -63,7 +63,7 @@ const config = {
     entireFileCacheLimit: 10000000, // 10MB
     chunkedCacheLimit: 100000000, // 100MB
     previewCache: false,
-    paths: ['/']
+    paths: ['/'],
   },
 
   /**
@@ -81,17 +81,17 @@ const config = {
    * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw&proxied
    * You can also embed this link (url encoded) directly inside Markdown or HTML.
    */
-  proxyDownload: false
+  proxyDownload: false,
 }
 
 // IIFE to set apiEndpoint & baseResource
 // eslint-disable-next-line no-unused-expressions
-!(function({ accountType, driveType, hostName, sitePath }) {
+!(function ({ accountType, driveType, hostName, sitePath }) {
   config.apiEndpoint = {
     graph: accountType ? 'https://microsoftgraph.chinacloudapi.cn/v1.0' : 'https://graph.microsoft.com/v1.0',
     auth: accountType
       ? 'https://login.chinacloudapi.cn/common/oauth2/v2.0'
-      : 'https://login.microsoftonline.com/common/oauth2/v2.0'
+      : 'https://login.microsoftonline.com/common/oauth2/v2.0',
   }
   config.baseResource = driveType ? `/sites/${hostName}:${sitePath}` : '/me/drive'
 })(config.type)

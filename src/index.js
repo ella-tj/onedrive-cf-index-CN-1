@@ -66,16 +66,17 @@ async function handleRequest(request) {
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
   if (thumbnail) {
-    const url = `${config.apiEndpoint.graph}${config.baseResource}/root:${base ||
-      '/' + (neoPathname === '/' ? '' : neoPathname)}:/thumbnails/0/${thumbnail}/content`
+    const url = `${config.apiEndpoint.graph}${config.baseResource}/root:${
+      base || '/' + (neoPathname === '/' ? '' : neoPathname)
+    }:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
       headers: {
-        Authorization: `bearer ${accessToken}`
-      }
+        Authorization: `bearer ${accessToken}`,
+      },
     })
 
     return await handleFile(request, pathname, resp.url, {
-      proxied
+      proxied,
     })
   }
 
@@ -94,8 +95,8 @@ async function handleRequest(request) {
   }
   const resp = await fetch(url, {
     headers: {
-      Authorization: `bearer ${accessToken}`
-    }
+      Authorization: `bearer ${accessToken}`,
+    },
   })
 
   let error = null
@@ -110,16 +111,13 @@ async function handleRequest(request) {
     }
     if ('file' in data) {
       // Render file preview view or download file directly
-      const fileExt = data.name
-        .split('.')
-        .pop()
-        .toLowerCase()
+      const fileExt = data.name.split('.').pop().toLowerCase()
 
       // Render file directly if url params 'raw' are given
       if (rawFile || !(fileExt in extensions)) {
         return await handleFile(request, pathname, data['@microsoft.graph.downloadUrl'], {
           proxied,
-          fileSize: data.size
+          fileSize: data.size,
         })
       }
 
@@ -132,8 +130,8 @@ async function handleRequest(request) {
       return new Response(await renderFilePreview(data, pathname, fileExt, cacheUrl || null), {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'content-type': 'text/html'
-        }
+          'content-type': 'text/html',
+        },
       })
     } else {
       // 302 all folder requests that doesn't end with /
@@ -144,8 +142,8 @@ async function handleRequest(request) {
       return new Response(await renderFolderView(data.value, neoPathname, request), {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'content-type': 'text/html'
-        }
+          'content-type': 'text/html',
+        },
       })
     }
   } else {
@@ -159,15 +157,15 @@ async function handleRequest(request) {
         return new Response(body, {
           status: 404,
           headers: {
-            'content-type': 'application/json'
-          }
+            'content-type': 'application/json',
+          },
         })
       default:
         return new Response(body, {
           status: 500,
           headers: {
-            'content-type': 'application/json'
-          }
+            'content-type': 'application/json',
+          },
         })
     }
   }

@@ -20,10 +20,10 @@ async function setCache(request, fileSize, downloadUrl, fallback) {
     const resp = new Response(remoteResp.body, {
       headers: {
         'Content-Type': remoteResp.headers.get('Content-Type'),
-        ETag: remoteResp.headers.get('ETag')
+        ETag: remoteResp.headers.get('ETag'),
       },
       status: remoteResp.status,
-      statusText: remoteResp.statusText
+      statusText: remoteResp.statusText,
     })
     await cache.put(request, resp.clone())
     return resp
@@ -35,10 +35,10 @@ async function setCache(request, fileSize, downloadUrl, fallback) {
     const resp = new Response(readable, {
       headers: {
         'Content-Type': remoteResp.headers.get('Content-Type'),
-        ETag: remoteResp.headers.get('ETag')
+        ETag: remoteResp.headers.get('ETag'),
       },
       status: remoteResp.status,
-      statusText: remoteResp.statusText
+      statusText: remoteResp.statusText,
     })
     await cache.put(request, resp.clone())
     return resp
@@ -57,8 +57,8 @@ async function directDownload(downloadUrl) {
   return new Response(null, {
     status: 302,
     headers: {
-      Location: downloadUrl.slice(6)
-    }
+      Location: downloadUrl.slice(6),
+    },
   })
 }
 
@@ -82,14 +82,15 @@ export async function handleFile(request, pathname, downloadUrl, { proxied = fal
 }
 
 export async function handleUpload(request, pathname, filename) {
-  const url = `${config.apiEndpoint.graph}/v1.0/me/drive/root:${encodeURI(config.base) +
-    (pathname.slice(-1) === '/' ? pathname : pathname + '/')}${filename}:/content`
+  const url = `${config.apiEndpoint.graph}/v1.0/me/drive/root:${
+    encodeURI(config.base) + (pathname.slice(-1) === '/' ? pathname : pathname + '/')
+  }${filename}:/content`
   return await fetch(url, {
     method: 'PUT',
     headers: {
       Authorization: `bearer ${await getAccessToken()}`,
-      ...request.headers
+      ...request.headers,
     },
-    body: request.body
+    body: request.body,
   })
 }
