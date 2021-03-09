@@ -10,7 +10,7 @@
 [![Deploy](https://github.com/spencerwooo/onedrive-cf-index/workflows/Deploy/badge.svg)](https://github.com/spencerwooo/onedrive-cf-index/actions?query=workflow%3ADeploy)
 [![README-CN](assets/chinese.svg)](./README-CN.md)
 
-<h5>本项目极大源自：<a href="https://github.com/heymind/OneDrive-Index-Cloudflare-Worker">onedrive-index-cloudflare-worker</a>，致敬。</h5>
+<h5>本项目使用 CloudFlare Workers 帮助你免费部署与分享你的 OneDrive 文件。本项目极大源自：<a href="https://github.com/heymind/OneDrive-Index-Cloudflare-Worker">onedrive-index-cloudflare-worker</a>，致敬。</h5>
 
 ## Demo
 
@@ -26,6 +26,7 @@
 - 令牌凭证由 Cloudflare Workers 自动刷新，并保存于（免费的）全局 KV 存储中；
 - 使用 [Turbolinks®](https://github.com/turbolinks/turbolinks) 实现路由懒加载；
 - 支持由世纪互联运营的 OneDrive 版本；
+- 支持 SharePoint 部署；
 
 ### 🗃️ 目录索引显示
 
@@ -45,6 +46,19 @@
   - PDF（支持懒加载、加载进度、Chrome 内置 PDF 阅读器）：`.pdf`. [_DEMO_](<https://storage.spencerwoo.com/%F0%9F%A5%91%20Course%20PPT%20for%20CS%20(BIT)/2018%20-%20%E5%A4%A7%E4%BA%8C%E4%B8%8B%20-%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/1%20FoundationofCG-Anonymous.pdf>).
   - 音乐：`.mp3`, `.aac`, `.wav`, `.oga`. [_DEMO_](https://storage.spencerwoo.com/%F0%9F%A5%9F%20Some%20test%20files/Multimedia/Elysian%20Fields%20-%20Climbing%20My%20Dark%20Hair.mp3).
   - 视频：`.mp4`, `.flv`, `.webm`, `.m3u8`. [_DEMO_](https://storage.spencerwoo.com/%F0%9F%A5%9F%20Some%20test%20files/Multimedia/%E8%BD%A6%E5%BA%93%E5%A5%B3%E7%8E%8B%20%E9%AB%98%E8%B7%9F%E8%B9%A6%E8%BF%AA%20%E4%B9%98%E9%A3%8E%E7%A0%B4%E6%B5%AA%E7%9A%84%E5%A7%90%E5%A7%90%E4%B8%BB%E9%A2%98%E6%9B%B2%E3%80%90%E9%86%8B%E9%86%8B%E3%80%91.mp4).
+
+### 🔒 私有文件夹
+
+![Private folders](assets/private-folder.png)
+
+我们可以给某个特定的文件夹（目录）上锁，需要认证才能访问。我们可以在 `src/auth/config.js` 文件中将我们想要设为私有文件夹的文件夹名称写入 `ENABLE_PATHS` 列表中，并将 `AUTH_ENABLED` 设置为 `true` 来开启这一功能。我们还可以自定义认证所使用的用户名 `NAME` 以及密码，其中认证密码保存于 `AUTH_PASSWORD` 环境变量中，如果需要这一功能，则需要使用 wrangler 来设置这一环境变量：
+
+```bash
+wrangler secret put AUTH_PASSWORD
+# 在这里输入你自己的认证密码
+```
+
+如果不需要开启这一功能，那么你可以直接注释掉定义 `PASS` 变量的那一行，使用下一行将 `PASS` 设置为空字符串即可。（另外也需要将 `AUTH_ENABLED` 设置为 `false`。）有关 wrangler 的使用细节等详细内容，请参考 [接下来的部分段落](#准备工作)。
 
 ### ⬇️ 代理下载文件 / 文件直链访问
 
@@ -66,7 +80,7 @@ https://storage.spencerwoo.com/%F0%9F%A5%9F%20Some%20test%20files/nyancat.gif?ra
 
 ## 部署指南
 
-_又臭又长的中文版部署指南预警！同时感谢原项目的 Token 在线获取工具：<https://heymind.github.io/tools/microsoft-graph-api-auth>，我们在后续步骤中将会使用这一工具。_
+_又臭又长的中文版部署指南预警！_
 
 ### 生成 OneDrive API 令牌
 
@@ -75,7 +89,7 @@ _又臭又长的中文版部署指南预警！同时感谢原项目的 Token 在
    1. 使用你的 Microsoft 账户登录，选择 `New registration`；
    2. 在 `Name` 处设置 Blade app 的名称，比如 `my-onedrive-cf-index`；
    3. 将 `Supported account types` 设置为 `Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts (e.g. Skype, Xbox)`。OneDrive 世纪互联用户设置为：`任何组织目录（任何 Azure AD 目录 - 多租户）中的帐户`；
-   4. 将 `Redirect URI (optional)` 设置为 `Web`（下拉选项框）以及 `https://heymind.github.io/tools/microsoft-graph-api-auth`（URL 地址）；
+   4. 将 `Redirect URI (optional)` 设置为 `Web`（下拉选项框）以及 `https://localhost`（URL 地址）；
    5. 点击 `Register`.
 
    ![](assets/register-app.png)
@@ -96,24 +110,15 @@ _又臭又长的中文版部署指南预警！同时感谢原项目的 Token 在
 
    ![](assets/permissions-used.png)
 
-5. 获取 `refresh_token`：
+5. 获取 `refresh_token`，在本机（需要 Node.js 和 npm 环境，安装和推荐配置请参考 [准备工作](#准备工作)）上面执行如下命令：
 
-   1. 打开 <https://heymind.github.io/tools/microsoft-graph-api-auth>.
-   2. 在 `4. Authorize for code` 处，输入我们的 `client_id` 并点击 `AUTHORIZE`.
+   ```sh
+   npx @beetcb/ms-graph-cli
+   ```
 
-      ![](assets/authorize-for-code.png)
+   <div align="center"><img src="https://raw.githubusercontent.com/beetcb/ms-graph-cli/master/media/demo.svg" alt="demo gif" width="560px" /></div>
 
-      登录我们的 Microsoft 账户，并授权 app，如果我们得到如下图所示的 Code，那么我们的认证过程就成功了：
-
-      ![](assets/got-code.png)
-
-      点击 `OK`，并进行下一步操作：
-
-   3. 在 `5. Exchange Access Token` 处，我们应该有填好了的上一步骤中获取的 `Code`，这里只需要输入刚刚拿到的 `client_secret`：
-
-      ![](assets/get-access-token.png)
-
-      点击 `GET TOKEN`，如果我们遇到类似 `error: "invalid_request"` 的报错，**那么请参考 Issue [#13](https://github.com/spencerwooo/onedrive-cf-index/issues/13#issuecomment-671027672) 给出的解决方案。** 如果一切正常，那么拿到我们的 `access_token`，以及如果需要，在下一步 `Refresh Token` 处拿到我们的 `refresh_token`。
+   根据你自己的情况选择合适的选项，并输入我们上面获取到的一系列 token 令牌配置等，其中 `redirect_url` 可以直接设置为 `http://localhost`。有关命令行工具的具体使用方法请参考：[beetcb/ms-graph-cli](https://github.com/beetcb/ms-graph-cli)。
 
 6. 最后，在我们的 OneDrive 中创建一个公共分享文件夹，比如 `/Public` 即可。建议不要直接分享根目录!
 
@@ -122,7 +127,7 @@ _又臭又长的中文版部署指南预警！同时感谢原项目的 Token 在
 - `refresh_token`
 - `client_id`
 - `client_secret`
-- `redirect_uri`：默认为 `https://heymind.github.io/tools/microsoft-graph-api-auth`；
+- `redirect_uri`
 - `base`：默认为 `/Public`。
 
 _是，我知道很麻烦，但是这是微软，大家理解一下。🤷🏼‍♂️_
@@ -172,9 +177,15 @@ wrangler kv:namespace create "BUCKET" --preview
 修改 [`src/config/default.js`](src/config/default.js)：
 
 - `client_id`：刚刚获取的 OneDrive `client_id`；
-- `base`：之前创建的 `base` 目录。
-
-_OneDrive 世纪互联用户：将 `useCnEndpoints` 设置（修改）为 `true`。_
+- `base`：之前创建的 `base` 目录；
+- 如果你部署常规国际版 OneDrive，那么忽略以下步骤即可；
+- 如果你部署的是由世纪互联运营的中国版 OneDrive：
+  - 修改 `type` 下的 `accountType` 为 `1`；
+  - 保持 `driveType` 不变；
+- 如果你部署的是 SharePoint 服务：
+  - 保持 `accountType` 不变；
+  - 修改 `driveType` 下的 `type` 为 `1`；
+  - 并根据你的 SharePoint 服务修改 `hostName` 和 `sitePath`。
 
 使用 `wrangler` 添加 Cloudflare Workers 环境变量：
 

@@ -5,16 +5,16 @@ const config = {
    * - accountType: controls account type, 0 for global, 1 for china (21Vianet)
    * - driveType: controls drive resource type, 0 for onedrive, 1 for sharepoint document
    *
-   * Follow key is used for sharepoint resource, change them only if you gonna use sharepoint
+   * Followed keys is used for sharepoint resource, change them only if you gonna use sharepoint
    * - hostName: sharepoint site hostname (like 'name.sharepoint.com')
    * - sitePath: sharepoint site path (like '/sites/name')
-   * !Note: we do not support deploy onedrive & sharepoint at the same time
+   * !Note: we do not support deploying onedrive & sharepoint at the same time
    */
   type: {
     accountType: 1,
     driveType: 0,
-    hostName: 'odbeet.sharepoint.cn',
-    sitePath: '/sites/beet',
+    hostName: null,
+    sitePath: null
   },
 
   /**
@@ -22,7 +22,7 @@ const config = {
    * to get following params: client_id, client_secret, refresh_token & redirect_uri.
    */
   refresh_token: REFRESH_TOKEN,
-  client_id: '9f325ea1-8e02-4f12-b416-2278149b3d4f',
+  client_id: '7434fc63-6f0b-47b4-b310-028a1df1075b',
   client_secret: CLIENT_SECRET,
   redirect_uri: 'http://localhost',
 
@@ -37,7 +37,7 @@ const config = {
    */
   pagination: {
     enable: true,
-    top: 100, // $top accepts a minimum value of 1 and a maximum value of 999 (inclusive)
+    top: 100 // $top accepts a minimum value of 1 and a maximum value of 999 (inclusive)
   },
 
   /**
@@ -63,7 +63,7 @@ const config = {
     entireFileCacheLimit: 10000000, // 10MB
     chunkedCacheLimit: 100000000, // 100MB
     previewCache: false,
-    paths: ['/'],
+    paths: ['/']
   },
 
   /**
@@ -76,22 +76,32 @@ const config = {
   thumbnail: true,
 
   /**
+   * Small File Upload (<= 4MB)
+   * POST https://<base_url>/<directory_path>/?upload=<filename>&key=<secret_key>
+   * The <secret_key> is defined by you
+   */
+  upload: {
+    enable: false,
+    key: 'your_secret_key_here'
+  },
+
+  /**
    * Feature: Proxy Download
    * Use Cloudflare as a relay to speed up download. (Especially in Mainland China)
    * Example: https://storage.spencerwoo.com/🥟%20Some%20test%20files/Previews/eb37c02438f.png?raw&proxied
    * You can also embed this link (url encoded) directly inside Markdown or HTML.
    */
-  proxyDownload: false,
+  proxyDownload: false
 }
 
 // IIFE to set apiEndpoint & baseResource
 // eslint-disable-next-line no-unused-expressions
-!(function ({ accountType, driveType, hostName, sitePath }) {
+!(function({ accountType, driveType, hostName, sitePath }) {
   config.apiEndpoint = {
     graph: accountType ? 'https://microsoftgraph.chinacloudapi.cn/v1.0' : 'https://graph.microsoft.com/v1.0',
     auth: accountType
       ? 'https://login.chinacloudapi.cn/common/oauth2/v2.0'
-      : 'https://login.microsoftonline.com/common/oauth2/v2.0',
+      : 'https://login.microsoftonline.com/common/oauth2/v2.0'
   }
   config.baseResource = driveType ? `/sites/${hostName}:${sitePath}` : '/me/drive'
 })(config.type)

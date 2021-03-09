@@ -1,5 +1,5 @@
 import config from './config/default'
-import { AUTH_ENABLED, NAME, PASS } from './auth/config'
+import { AUTH_ENABLED, NAME, PASS, DISABLE_PATHS, ENABLE_PATHS } from './auth/config'
 import { parseAuthHeader, unauthorizedResponse } from './auth/credentials'
 import { getAccessToken, getSiteID } from './auth/onedrive'
 import { handleFile } from './files/load'
@@ -14,10 +14,25 @@ addEventListener('fetch', event => {
 async function handle(request) {
   if (AUTH_ENABLED === false) {
     return handleRequest(request)
-  } else if (AUTH_ENABLED === true) {
-    const credentials = parseAuthHeader(request.headers.get('Authorization'))
-    if (!credentials || credentials.name !== NAME || credentials.pass !== PASS) {
-      return unauthorizedResponse('Unauthorized')
+  }
+
+  if (AUTH_ENABLED === true) {
+    const pathname = decodeURIComponent(new URL(request.url).pathname).toLowerCase()
+    const publicPaths = DISABLE_PATHS.map(i => i.toLowerCase())
+    const privatePaths = ENABLE_PATHS.map(i => i.toLowerCase())
+
+    if (publicPaths.filter(p => pathname.toLowerCase().startsWith(p)).length > 0 && !/__Lock__/gi.test(pathname)) {
+      return handleRequest(request)
+    }
+
+    if (privatePaths.filter(p => pathname.toLowerCase().startsWith(p)).length > 0 || /__Lock__/gi.test(pathname)) {
+      const credentials = parseAuthHeader(request.headers.get('Authorization'))
+
+      if (!credentials || credentials.name !== NAME || credentials.pass !== PASS) {
+        return unauthorizedResponse('Unauthorized')
+      }
+
+      return handleRequest(request)
     } else {
       return handleRequest(request)
     }
@@ -66,23 +81,24 @@ async function handleRequest(request) {
   const proxied = config.proxyDownload ? searchParams.get('proxied') !== null : false
 
   if (thumbnail) {
-    const url = `${config.apiEndpoint.graph}${config.baseResource}/root:${
-      base || '/' + (neoPathname === '/' ? '' : neoPathname)
-    }:/thumbnails/0/${thumbnail}/content`
+    const url = `${config.apiEndpoint.graph}${config.baseResource}/root${wrapPathName(
+      neoPathname,
+      isRequestFolder
+    )}:/thumbnails/0/${thumbnail}/content`
     const resp = await fetch(url, {
       headers: {
-        Authorization: `bearer ${accessToken}`,
-      },
+        Authorization: `bearer ${accessToken}`
+      }
     })
 
     return await handleFile(request, pathname, resp.url, {
-      proxied,
+      proxied
     })
   }
 
   let url = `${config.apiEndpoint.graph}${config.baseResource}/root${wrapPathName(neoPathname, isRequestFolder)}${
     isRequestFolder
-      ? '/children?' + `${config.pagination.enable && config.pagination.top ? `&$top=${config.pagination.top}` : ''}`
+      ? '/children' + (config.pagination.enable && config.pagination.top ? `?$top=${config.pagination.top}` : '')
       : '?select=%40microsoft.graph.downloadUrl,name,size,file'
   }`
 
@@ -95,8 +111,8 @@ async function handleRequest(request) {
   }
   const resp = await fetch(url, {
     headers: {
-      Authorization: `bearer ${accessToken}`,
-    },
+      Authorization: `bearer ${accessToken}`
+    }
   })
 
   let error = null
@@ -111,13 +127,16 @@ async function handleRequest(request) {
     }
     if ('file' in data) {
       // Render file preview view or download file directly
-      const fileExt = data.name.split('.').pop().toLowerCase()
+      const fileExt = data.name
+        .split('.')
+        .pop()
+        .toLowerCase()
 
       // Render file directly if url params 'raw' are given
       if (rawFile || !(fileExt in extensions)) {
         return await handleFile(request, pathname, data['@microsoft.graph.downloadUrl'], {
           proxied,
-          fileSize: data.size,
+          fileSize: data.size
         })
       }
 
@@ -130,8 +149,8 @@ async function handleRequest(request) {
       return new Response(await renderFilePreview(data, pathname, fileExt, cacheUrl || null), {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'content-type': 'text/html',
-        },
+          'content-type': 'text/html'
+        }
       })
     } else {
       // 302 all folder requests that doesn't end with /
@@ -142,8 +161,8 @@ async function handleRequest(request) {
       return new Response(await renderFolderView(data.value, neoPathname, request), {
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'content-type': 'text/html',
-        },
+          'content-type': 'text/html'
+        }
       })
     }
   } else {
@@ -153,19 +172,19 @@ async function handleRequest(request) {
   if (error) {
     const body = JSON.stringify(error)
     switch (error.code) {
-      case 'ItemNotFound':
+      case 'itemNotFound':
         return new Response(body, {
           status: 404,
           headers: {
-            'content-type': 'application/json',
-          },
+            'content-type': 'application/json'
+          }
         })
       default:
         return new Response(body, {
           status: 500,
           headers: {
-            'content-type': 'application/json',
-          },
+            'content-type': 'application/json'
+          }
         })
     }
   }

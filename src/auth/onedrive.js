@@ -20,8 +20,8 @@ export async function getAccessToken() {
     body: `client_id=${config.client_id}&redirect_uri=${config.redirect_uri}&client_secret=${config.client_secret}
     &refresh_token=${config.refresh_token}&grant_type=refresh_token`,
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
   })
   if (resp.ok) {
     console.info('Successfully refreshed access_token.')
@@ -51,12 +51,12 @@ export async function getSiteID(accessToken) {
   if (!data) {
     const resp = await fetch(`${config.apiEndpoint.graph}${config.baseResource}?$select=id`, {
       headers: {
-        Authorization: `bearer ${accessToken}`,
-      },
+        Authorization: `bearer ${accessToken}`
+      }
     })
     if (resp.ok) {
       data = await resp.json()
-      console.log('get site-id from graph')
+      console.log('Got & stored site-id.')
       await BUCKET.put('sharepoint', JSON.stringify({ id: data.id }))
     }
   }
