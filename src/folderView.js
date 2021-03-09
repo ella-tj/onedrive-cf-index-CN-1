@@ -38,7 +38,7 @@ export async function renderFolderView(items, path, request) {
   const isIndex = path === '/'
 
   const el = (tag, attrs, content) => `<${tag} ${attrs.join(' ')}>${content}</${tag}>`
-  const div = (className, id, content) => el('div', [`class=${className} ${id}`], content)
+  const div = (className, content) => el('div', [`class=${className}`], content)
   const item = (icon, fileName, fileAbsoluteUrl, size, emojiIcon) =>
     el(
       'a',

@@ -1,4 +1,3 @@
-import { pink, plum } from 'color-name'
 import { favicon } from './favicon'
 
 const COMMIT_HASH = 'ad7b598'

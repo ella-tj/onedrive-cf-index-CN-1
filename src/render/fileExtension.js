@@ -6,7 +6,7 @@ const preview = {
   code: 'code',
   video: 'video',
   audio: 'audio',
-  html: 'html',
+  html: 'html'
 }
 
 const extensions = {
@@ -50,10 +50,7 @@ const extensions = {
   ogg: preview.audio,
   oga: preview.audio,
   opus: preview.audio,
-  flac: preview.audio,
-
-  htm: preview.html,
-  html: preview.html,
+  flac: preview.audiof
 }
 
 export { extensions, preview }
