@@ -66,11 +66,9 @@ export async function renderFolderView(items, path, request) {
 
   const body = div(
     'container',
-    'id="listContainer"',
-    div('path', '', renderPath(path)) +
+    div('path', renderPath(path)) +
       div(
         'items',
-        '',
         el(
           'div',
           ['style="min-width: 600px"'],
@@ -88,6 +86,9 @@ export async function renderFolderView(items, path, request) {
                 } else if ('file' in i) {
                   // Check if README.md exists
                   if (!readmeExists) {
+                    // TODO: debugging for README preview rendering
+                    console.log(i)
+
                     readmeExists = i.name.toLowerCase() === 'readme.md'
                     readmeFetchUrl = i['@microsoft.graph.downloadUrl']
                   }

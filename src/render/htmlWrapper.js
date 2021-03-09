@@ -1,7 +1,7 @@
 import { pink, plum } from 'color-name'
 import { favicon } from './favicon'
 
-const COMMIT_HASH = '6e91d1e3342969a45b21c2893a788ba3dc46f854'
+const COMMIT_HASH = 'ad7b598'
 
 const pagination = (pIdx, attrs) => {
   const getAttrs = (c, h, isNext) =>
@@ -45,6 +45,7 @@ export function renderHTML(body, pLink, pIdx) {
       <script src="https://cdn.jsdelivr.net/npm/turbolinks@5.2.0/dist/turbolinks.min.js"></script>
       <script src="https://cdn.jsdelivr.net/gh/pipwerks/PDFObject/pdfobject.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/flv.js@1.5.0/dist/flv.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
     </head>
     <body>
