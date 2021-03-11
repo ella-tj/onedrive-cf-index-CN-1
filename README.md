@@ -1,12 +1,8 @@
-[![Hosted on Cloudflare Workers](https://img.shields.io/badge/Hosted%20on-CF%20Workers-f38020?logo=cloudflare&logoColor=f38020&labelColor=282d33)](https://drive.tcxz.cc/)
-
 <h1>onedrive-cf-index(for 21vianet Users)</h1>
-
-> Hint: This demostration is mainland-orited, so the default language：`中文`
 
 Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencerwooo/onedrive-cf-index)
 
-**源库已支持世纪互联，所以把此文档留作一个简陋的中文指示，希望能帮助到有需要的朋友**
+**此说明已过时，请查看原库[中文文档](https://github.com/spencerwooo/onedrive-cf-index/blob/master/README-CN.md)，有详尽的世纪互联部署教程**
 
 ## 演示地址
 

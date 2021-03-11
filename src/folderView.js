@@ -86,9 +86,6 @@ export async function renderFolderView(items, path, request) {
                 } else if ('file' in i) {
                   // Check if README.md exists
                   if (!readmeExists) {
-                    // TODO: debugging for README preview rendering
-                    console.log(i)
-
                     readmeExists = i.name.toLowerCase() === 'readme.md'
                     readmeFetchUrl = i['@microsoft.graph.downloadUrl']
                   }

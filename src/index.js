@@ -114,11 +114,11 @@ async function handleRequest(request) {
       Authorization: `bearer ${accessToken}`
     }
   })
+  console.log('REQUEST TO', url)
 
   let error = null
   if (resp.ok) {
     const data = await resp.json()
-    console.log(data)
     if (data['@odata.nextLink']) {
       request.pIdx = paginationIdx || 1
       request.pLink = data['@odata.nextLink'].match(/&\$skiptoken=(.+)/)[1]
