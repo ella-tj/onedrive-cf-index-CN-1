@@ -1,8 +1,8 @@
 import config from './config/default'
-import { AUTH_ENABLED, NAME, PASS, DISABLE_PATHS, ENABLE_PATHS } from './auth/config'
+import { AUTH_ENABLED, NAME, ENABLE_PATHS } from './auth/config'
 import { parseAuthHeader, unauthorizedResponse } from './auth/credentials'
 import { getAccessToken, getSiteID } from './auth/onedrive'
-import { handleFile } from './files/load'
+import { handleFile, handleUpload } from './files/load'
 import { extensions } from './render/fileExtension'
 import { renderFolderView } from './folderView'
 import { renderFilePreview } from './fileView'
@@ -18,17 +18,12 @@ async function handle(request) {
 
   if (AUTH_ENABLED === true) {
     const pathname = decodeURIComponent(new URL(request.url).pathname).toLowerCase()
-    const publicPaths = DISABLE_PATHS.map(i => i.toLowerCase())
     const privatePaths = ENABLE_PATHS.map(i => i.toLowerCase())
-
-    if (publicPaths.filter(p => pathname.toLowerCase().startsWith(p)).length > 0 && !/__Lock__/gi.test(pathname)) {
-      return handleRequest(request)
-    }
 
     if (privatePaths.filter(p => pathname.toLowerCase().startsWith(p)).length > 0 || /__Lock__/gi.test(pathname)) {
       const credentials = parseAuthHeader(request.headers.get('Authorization'))
 
-      if (!credentials || credentials.name !== NAME || credentials.pass !== PASS) {
+      if (!credentials || credentials.name !== NAME || credentials.pass !== AUTH_PASSWORD) {
         return unauthorizedResponse('Unauthorized')
       }
 
@@ -109,12 +104,12 @@ async function handleRequest(request) {
   if (paginationLink && paginationLink !== 'undefined') {
     url += `&$skiptoken=${paginationLink}`
   }
+
   const resp = await fetch(url, {
     headers: {
       Authorization: `bearer ${accessToken}`
     }
   })
-  console.log('REQUEST TO', url)
 
   let error = null
   if (resp.ok) {
@@ -153,6 +148,19 @@ async function handleRequest(request) {
         }
       })
     } else {
+      // Render folder view, list all children files
+      if (config.upload && request.method === 'POST') {
+        const filename = searchParams.get('upload')
+        const key = searchParams.get('key')
+        if (filename && key && config.upload.key === key) {
+          return await handleUpload(request, neoPathname, filename)
+        } else {
+          return new Response('', {
+            status: 400
+          })
+        }
+      }
+
       // 302 all folder requests that doesn't end with /
       if (!isRequestFolder) {
         return Response.redirect(request.url + '/', 302)
