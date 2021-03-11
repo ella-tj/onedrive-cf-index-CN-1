@@ -6,7 +6,7 @@ Fork 自 [onedrive-cf-index，请 ⭐star 原项目 ](https://github.com/spencer
 
 ## 演示地址
 
-[☘️ Beet's OneDrive Index](https://drive.tcxz.cc/).
+[☘️ Beet's OneDrive Index](https://drive.beetcb.com/).
 
 ---
 
