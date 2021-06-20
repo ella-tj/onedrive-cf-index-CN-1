@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 const config = {
   refresh_token: REFRESH_TOKEN,
-  client_id: '7434fc63-6f0b-47b4-b310-028a1df1075b',
+  client_id: '74f9d130-25fb-46a6-9e86-4a11115c36c4',
   client_secret: CLIENT_SECRET,
   redirect_uri: 'http://localhost',
 
